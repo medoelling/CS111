@@ -1,0 +1,126 @@
+Name: Haonan Zhou
+UCLA ID: 104180068
+
+
+-------------------------------------------------------------------------------
+////////////////////////
+Response to Exercise 1:
+////////////////////////
+
+It will return the same value because all process have their own register values.
+Changing eax, for example, of one process does not change the eax of another process
+
+////////////////////
+Exercise 3:
+///////////////////
+
+An additional field, p_waiting is added to the process struct.
+It is a pointer to another process which is waiting for the current
+process. When the current process exits, the other process can stop
+waiting, and therefore can be marked as "Runnable".
+
+
+Extra credit exercises:
+
+//////////////////
+Excercise 5:
+//////////////////
+
+void
+start(void)
+{
+	pid_t p;
+	int x = 0;
+	int* volatile ptr = &x;
+	p = sys_fork();
+
+	if(p==0){
+	  x++;
+	  (*ptr)++;
+	}
+	else if(p > 0)
+	  sys_wait(p);
+	app_printf("%d", x);
+	sys_exit(0);
+}
+
+
+//////////////
+Excercise 6
+//////////////
+
+pid_t sys_newhread(void (*start_function) (void))
+{
+	pid_t i;
+	for( i=1; i < NPROCS; i++)
+	{
+		if(proc_array[i].p_state == P_EMPTY)
+		{
+			proc_array[i].p_state = P_RUNNABLE;
+			proc_array[i].p_registers.reg_eax = 0;
+			proc_array[i].p_registers.reg_eip = start_function;
+			return i;
+		}
+	}
+	return -1; //return -1 if cannot find an empty process
+}
+
+/////////////////
+Excercise 7
+/////////////////
+
+
+in mpos-app.h:
+=============
+static inline int
+sys_kill(pid_t pid)
+{
+	int retval;
+	asm volatile("int %1\n"
+		     : "=a" (retval)
+		     : "i" (INT_SYS_KILL),
+		       "a" (pid)
+		     : "cc", "memory");
+	return retval;
+}
+
+in mpos-kern.c:
+================
+
+	case INT_SYS_KILL:
+	  {
+	    pid_t p = current->p_registers.reg_eax;
+	    if (p <= 0 || p >= NPROCS || p == current->p_pid
+		|| proc_array[p].p_state == P_EMPTY)
+	      current->p_registers.reg_eax = -1;
+	    else if(proc_array[p].p_state == P_ZOMBIE)
+	      {
+		proc_array[p].p_state == P_EMPTY;
+		current->p_registers.reg_eax = 0;
+	      }
+	    else
+	      {
+		proc_array[p].p_state = P_EMPTY;
+		proc_array[p].p_exit_status = -1;
+		if(proc_array[p].p_waiting)
+		  {
+		    proc_array[p].p_waiting->p_state = P_RUNNABLE;
+		    proc_array[p].p_waiting->p_registers.reg_eax = proc_array[p].p_exit_status;
+		  }
+	      }
+	    schedule();
+	    }
+
+in run_child(), mpos-app2.c:
+=================
+
+	if((sys_getpid() % 2) == 0)
+	  {
+	    pid_t i;
+	    for(i = 3; i < NPROCS; i+=2)
+	      sys_kill(i);
+	  }
+	    
+in mpos.h:
+=================
+#define INT_SYS_KILL 60

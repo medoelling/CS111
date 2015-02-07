@@ -1,0 +1,81 @@
+Name:		Haonan Zhou
+UCLA ID:       	104180068
+
+Collaborators:	None
+
+-------------------------------------------------------------------------------
+
+Response to Exercise 1:
+
+The name of the scheduling algorithm is: Round Robin
+
+
+(Exercise 2 is a coding exercise)
+
+
+Response to Exercise 3:
+
+Average turnaround time for scheduling_algorithm 0:	1278.5
+
+proc1: 320*4 - 3 = 1277
+proc2: 320*4 - 2 = 1278
+proc3: 320*4 - 1 = 1279
+proc4: 320*4   	 = 1280
+
+avg =  1278.5
+
+Average turnaround time for scheduling_algorithm 1:	800
+
+proc1: 320
+proc2: 320*2
+proc3: 320*3
+proc4: 320*4
+
+avg = 800
+
+Average wait time for scheduling_algorithm 0:	1.5
+
+proc1: 0
+proc2: 1
+proc3: 2
+proc4: 3
+
+avg = 1.5
+
+Average wait time for scheduling_algorithm 1:	480
+
+proc1: 0
+proc2: 320
+proc3: 320*2
+proc4: 320*3
+
+avg = 480
+
+
+Exercise 4:
+
+Did you complete Exercise 4A, Exercise 4B, or both for extra credit?
+
+I completed both 4A and 4B. 
+
+Exercise 5:
+
+The first timer interrupt occurs during the process 4, because
+a '1' was printed to screen after the '3' instead of a '4'. This indicates
+that before cursorpos incremented in the process 4, process 1 prints its
+char to screen and overwrites the '4'. 
+
+(Exercise 6 is a coding exercise)
+
+
+Anything else you'd like us to know:
+
+
+
+Extra credit exercises:
+
+I did both Ex. 7 and 8.
+
+For Ex. 7, I added lottery scheduling algorithm (scheduling_algorithm = 4). 
+
+For Ex.8, include '#define alt_sync_mech' at top of schedos-1.c to use the alternative sync mechanism, which uses a system call to print out chars.
