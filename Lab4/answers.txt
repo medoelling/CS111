@@ -1,0 +1,77 @@
+# Fill in your name, student ID, and email address in this file.
+# If you are working in a team, fill out the information for both team 
+# members.
+
+# SUBMIT THE LAB ONLY ONCE (from only one partner). This file will be
+# automatically parsed in order to give both team members credit for the
+# lab.
+
+# You need to fill in the EXERCISE sections describing your solutions
+# for Tasks 1, 2, and 3, as well as write the corresponding code.
+# If you did one or more extra credit problems, indicate which one in the
+# appropriate section below (remove the # sign first). If you have any other
+# information you'd like us to know, please add it at the end of the file.
+
+# Partner 1
+Name: Haonan Zhou
+Student ID: 104180068
+Email: tomzhou94@gmail.com
+
+# Partner 2 (if you're working in a team)
+Name: Yichen Pan
+Student ID: 604152505
+Email: panyichen@outlook.com
+
+# EXERCISE 1: What method you used to make your peer download and upload
+#    files in parallel?  (~1-3 sentences)
+
+We used fork() to create a new process for each download/upload. In each
+forked child process, the file is downloaded or uploaded in parallel.
+
+# EXERCISE 2A: What conditions did you find and fix that would have
+#    triggered a buffer overrun bug?  (~1-3 sentences each)
+
+A peer may request a file with a name larger than FILENAMESIZ, which will cause
+a overflow of the file name buffer in a task. To protect against this, we
+used 'strncpy' instead of 'strcpy' to copy the name into the buffer. Moreover,
+we always append a null byte at the end of the buffer.
+
+# EXERCISE 2B: What other robustness problems did you fix?  (~1-3 sentences
+#    each)
+
+1) A peer may ask for a file outside the current directory. 
+
+   Fix: Before we upload to a peer, we check for the file being asked for.
+   	If it is not in the current directory, we do not upload the file. 
+
+2) When we download, a peer may send endless data to us.
+
+   Fix: As we write data to disk, we keep track of how much data we received.
+   	If we received too much data (more than some limit), then we should stop 
+	writing to our disk. 
+
+
+# EXERCISE 3: Describe the attacks you implemented for "evil mode".  Why
+#    are they attacks?  (~3-10 sentences each)
+
+1) When we download from other peers, we can request a file with a very long name.
+   In our attack code, we sent the peer a name twice as long as FILENAMESIZ.
+   If the peer writes the name into its task buffer without properly checking
+   for its length, it will cause a buffer overflow. And some other data in the peer's
+   task struct may be corrupted. Even worse, if we design our file name well,
+   we may be able to control what the peer upload to us by changing fieids in
+   the task struct.
+
+2) When a peer request a file from us, we can send it an endless or useless file.
+   In our implementation, we send the peer a null device (/dev/null) as long as we are
+   in evil mode. If the peer does properly check what we sent, the null device could be
+   very dangerous to their system. 
+
+# Extra credit problems
+#Extra credit problem: 
+
+
+# Add any other information you'd like us to know below this line.
+
+This is the design problem of lab 4. Details of this design problem is in
+the report. 

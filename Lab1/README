@@ -1,0 +1,40 @@
+This is a skeleton for CS 111 Lab 1.
+/////////////////////////////
+Group Member:
+
+Haonan Zhou 104180068
+Yichen Pan  604152505
+////////////////////////////
+
+
+- CLOCK_REALTIME is used to get the finishing time of a process. 
+- CLOCK_MONOTONIC is used to get the real time of a process. This is
+  because CLOCK_MONOTONIC can never be reset. 
+
+Lab 1c questions:
+
+1. Yes.
+   The first column should always be in nondecreasing order.
+   This is because all commands are executed sequentially. And the log
+   should report times of processes in the exactly order in which
+   they exit.
+
+2. Yes.
+   If we add the following loop to one of the child processes:
+
+   int i = 0;
+   while(i < 10000000)
+   	   i++;
+
+   Then we can manually increase the user time of this process.
+
+3. No.
+   The real time is obtained using the CLOCK_MONOTONIC clock id,
+   which can never be reset. The user and system time is returned
+   from getrusage(). Therefore, if any of these is negative, it means
+   that the process finishes before it starts, which is not possible.
+
+4. I used pipe, sequence, and 'sleep' commands to check.
+   If the first column of the log file is in nondecreasing order,
+   then the lines are not interleaved. 
+   These test cases are included in 'mytest.sh'
